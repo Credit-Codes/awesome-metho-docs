@@ -1,3 +1,4 @@
+# Project Management Docs
 
 ## Project Charter
 
@@ -22,7 +23,6 @@ Deliverables:
 To produce a validated, stakeholder-approved **Requirements Baseline and Gap Analysis** that will serve as the foundation for .
 
 This project does NOT include XXXXX.
-
 
 ## 1.3 Objectives (Measurable)
 
