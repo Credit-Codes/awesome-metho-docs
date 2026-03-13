@@ -1,0 +1,83 @@
+name: Docs Quality
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  docs-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Markdown lint
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: |
+            **/*.md
+            !LICENSE
+
+      - name: Custom ID and traceability checks
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          mapfile -t changed_files < <(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- '*.md')
+
+          if [ "${#changed_files[@]}" -eq 0 ]; then
+            echo "No changed markdown files."
+            exit 0
+          fi
+
+          failed=0
+
+          for file in "${changed_files[@]}"; do
+            [ -f "$file" ] || continue
+
+            # Enforce canonical status values when a Status line exists.
+            if grep -Eiq '^status\s*:' "$file"; then
+              if ! grep -Eq '^[Ss]tatus\s*:\s*(Draft|In Review|Approved|Deprecated)\s*$' "$file"; then
+                echo "::error file=$file::Invalid status value. Use Draft | In Review | Approved | Deprecated."
+                failed=1
+              fi
+            fi
+
+            # Enforce canonical priority values when a Priority line exists.
+            if grep -Eiq '^priority\s*:' "$file"; then
+              if ! grep -Eq '^[Pp]riority\s*:\s*(Must|Should|Could)\s*$' "$file"; then
+                echo "::error file=$file::Invalid priority value. Use Must | Should | Could."
+                failed=1
+              fi
+            fi
+
+            case "$file" in
+              */FR-*.md|FR-*.md)
+                if ! grep -Eq 'UC-[A-Za-z0-9-]+' "$file"; then
+                  echo "::error file=$file::FR artifact should reference at least one UC ID (UC-*)."
+                  failed=1
+                fi
+                ;;
+              */UC-*.md|UC-*.md)
+                if ! grep -Eq 'FR-[A-Za-z0-9-]+' "$file"; then
+                  echo "::error file=$file::UC artifact should reference at least one FR ID (FR-*)."
+                  failed=1
+                fi
+                ;;
+            esac
+          done
+
+          if [ "$failed" -ne 0 ]; then
+            echo "Documentation quality checks failed."
+            exit 1
+          fi
+
+          echo "Documentation quality checks passed."

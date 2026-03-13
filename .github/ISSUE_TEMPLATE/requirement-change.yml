@@ -1,0 +1,86 @@
+name: Requirement Change
+about: Request a new or updated requirement artifact with traceable business context.
+title: "[REQ] <short title>"
+labels:
+  - requirements
+body:
+  - type: input
+    id: scope
+    attributes:
+      label: Scope
+      description: Package, module, or business process in scope.
+      placeholder: "Example: Package2 onboarding flow"
+    validations:
+      required: true
+
+  - type: input
+    id: actor
+    attributes:
+      label: Primary Actor
+      description: Who initiates or owns this requirement change?
+      placeholder: "Example: Operations Analyst"
+    validations:
+      required: true
+
+  - type: input
+    id: trigger
+    attributes:
+      label: Trigger
+      description: What event starts this process or use case?
+      placeholder: "Example: User submits onboarding form"
+    validations:
+      required: true
+
+  - type: textarea
+    id: business_value
+    attributes:
+      label: Business Value
+      description: Why this change matters and expected outcome.
+      placeholder: "Describe measurable value, impact, or risk reduction."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria (Given/When/Then)
+      description: Add testable acceptance criteria.
+      placeholder: |
+        Given ...
+        When ...
+        Then ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: impacted_ids
+    attributes:
+      label: Impacted IDs
+      description: List related IDs.
+      placeholder: |
+        FR-...
+        UC-...
+        NFR-...
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Link related files, diagrams, or decisions.
+      placeholder: "Paths, URLs, and context notes"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: readiness
+    attributes:
+      label: Readiness Check
+      options:
+        - label: I confirmed there is no conflicting or duplicate ID.
+          required: true
+        - label: I included enough detail for drafting FR/UC updates.
+          required: true
+        - label: I listed open questions or unknowns.
+          required: true

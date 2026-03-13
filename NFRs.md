@@ -1,11 +1,10 @@
 
----
+
 
 # 3. Non-Functional Requirements (NFRs)
 
----
-
 ## NFR-1: Availability
+
 *
 *
 ---
@@ -96,13 +95,11 @@ The system shall provide:
 
 # 4. Assumptions
 
-- 
----
+
 
 # 5. Open Questions
 
-- 
----
+
 
 # 6. MVP Scope Recommendation
 
